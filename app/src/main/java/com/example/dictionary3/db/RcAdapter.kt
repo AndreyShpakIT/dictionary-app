@@ -1,9 +1,9 @@
 package com.example.dictionary3.db
 
+import android.os.Build
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dictionary3.R
 import com.example.dictionary3.Word.Word
@@ -25,11 +25,20 @@ class RcAdapter(wordList: ArrayList<Word>) : RecyclerView.Adapter<RcAdapter.Hold
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val binding = RcItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        binding.root.setOnClickListener {
+        binding.root.setOnClickListener() {
+/*
             Toast.makeText(parent.context, "${binding.tvRussian.text} | ${binding.tvEnglish.text} | ${binding.tvState.text}", Toast.LENGTH_SHORT).show()
+*/
+            val builder = android.app.AlertDialog.Builder(parent.context)
+            builder
+                    .setView(R.layout.custom_alert_dialog)
+
+            builder.show()
         }
+
         return Holder(binding)
     }
 

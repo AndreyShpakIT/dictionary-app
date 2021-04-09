@@ -75,7 +75,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:rippleColor="@color/black"
-        app:srcCompat="@drawable/ic_close"
         app:useCompatPadding="false" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
