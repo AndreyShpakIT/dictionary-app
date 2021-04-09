@@ -1,19 +1,22 @@
 package com.example.dictionary3
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.app.AlertDialog
+import android.util.Log
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.dictionary3.Word.Word
 import com.example.dictionary3.databinding.ActivityMainBinding
 import com.example.dictionary3.db.DbManager
-import com.example.dictionary3.db.RcAdapter
+import com.google.android.material.snackbar.Snackbar
 
-class MainActivity : AppCompatActivity() {
 
+class MainActivity : AppCompatActivity(), CellLongClickListener, AlertDialogClickListeners {
+
+    private val CODE: String = "MainActivity"
     private lateinit var bindingClass : ActivityMainBinding
-    private val rcAdapter = RcAdapter(ArrayList())
+    private lateinit var rcAdapter : RcAdapter
     private val db = DbManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,17 +25,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(bindingClass.root)
 
         bindingClass.buttonNewWord.setOnClickListener {
-            val intent = Intent(this, AddActivity::class.java)
-            startActivity(intent)
-        }
+            /*val intent = Intent(this, AddActivity::class.java)
+            startActivity(intent)*/
 
-
-
-        bindingClass.buttonTest.setOnClickListener {
-
-
+            var bottomDialog = BottomFragmentSheet()
+            bottomDialog.show(supportFragmentManager, "TAG")
 
         }
+
+        bindingClass.buttonResfresh.setOnClickListener() {
+            refreshRcView()
+        }
+
+        rcAdapter = RcAdapter(ArrayList(), this, this)
 
         db.openDb()
         init()
@@ -41,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         db.openDb()
-        fillAdapter()
+        refreshRcView()
     }
 
     override fun onDestroy() {
@@ -54,7 +59,48 @@ class MainActivity : AppCompatActivity() {
         bindingClass.rcView.adapter = rcAdapter
     }
 
-    private fun fillAdapter() {
+    private fun refreshRcView() {
         rcAdapter.updateAdapter(db.getWordList())
     }
+
+    override fun onCellLongClickListener(word: Word) : Boolean {
+
+        var alert = CustomAlert(this, this)
+        alert.showDialog(word)
+
+        return true
+    }
+
+    override fun onDeleteClickListener(word: Word) {
+        Log.d(CODE, "onDeleteClickListener works...")
+
+        val snackbar = Snackbar.make(
+            bindingClass.root,
+            "Вы уверены что хотите удалить слово: ${word.englishWord}?",
+            Snackbar.LENGTH_LONG
+        )
+
+        snackbar.setAction(
+            "Yes"
+        ) {
+            db.deleteWord(word)
+            refreshRcView()
+        }
+        snackbar.show()
+    }
+
+    override fun onChangeClickListener(word: Word) {
+
+        Log.d(CODE, "onChangeClickListener works...")
+    }
+
+}
+
+interface CellLongClickListener {
+    fun onCellLongClickListener(data: Word) : Boolean
+}
+
+interface AlertDialogClickListeners {
+    fun onDeleteClickListener(word: Word)
+    fun onChangeClickListener(word: Word)
 }

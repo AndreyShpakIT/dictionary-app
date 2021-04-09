@@ -1,43 +1,34 @@
-package com.example.dictionary3.db
+package com.example.dictionary3
 
+import android.app.Activity
+import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dictionary3.R
 import com.example.dictionary3.Word.Word
+import com.example.dictionary3.Word.WordStates
+import com.example.dictionary3.databinding.RcCardItemBinding
 import com.example.dictionary3.databinding.RcItemBinding
 
-class RcAdapter(wordList: ArrayList<Word>) : RecyclerView.Adapter<RcAdapter.Holder>() {
+class RcAdapter(private var list: ArrayList<Word>, private var context: Activity, private val cellLongClickListener: CellLongClickListener) : RecyclerView.Adapter<RcAdapter.Holder>() {
 
-    var list:ArrayList<Word> = wordList
-
-    class Holder(binding: RcItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class Holder(binding: RcCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         var binding = binding
 
         fun setData(word: Word){
             binding.tvEnglish.text = word.englishWord
             binding.tvRussian.text = word.russianWord
-            binding.tvState.text = word.wordState.name
+            binding.ivState.setImageResource(word.wordState.icon)
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
-        val binding = RcItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        binding.root.setOnClickListener() {
-/*
-            Toast.makeText(parent.context, "${binding.tvRussian.text} | ${binding.tvEnglish.text} | ${binding.tvState.text}", Toast.LENGTH_SHORT).show()
-*/
-            val builder = android.app.AlertDialog.Builder(parent.context)
-            builder
-                    .setView(R.layout.custom_alert_dialog)
 
-            builder.show()
-        }
+        val binding = RcCardItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return Holder(binding)
     }
@@ -45,6 +36,11 @@ class RcAdapter(wordList: ArrayList<Word>) : RecyclerView.Adapter<RcAdapter.Hold
     override fun onBindViewHolder(holder: Holder, position: Int) {
 
         holder.setData(list[position])
+
+        holder.itemView.setOnLongClickListener {
+            cellLongClickListener.onCellLongClickListener(list[position])
+        }
+
     }
 
     override fun getItemCount(): Int {
@@ -56,5 +52,4 @@ class RcAdapter(wordList: ArrayList<Word>) : RecyclerView.Adapter<RcAdapter.Hold
         list.addAll(listItems)
         notifyDataSetChanged()
     }
-
 }

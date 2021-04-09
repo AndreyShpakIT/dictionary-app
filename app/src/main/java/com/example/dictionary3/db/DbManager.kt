@@ -71,10 +71,12 @@ class DbManager(val context: Context) {
         return dataList
     }
 
-    fun removeWord(word: Word) {
-        // TODO Протестировать методв removeWord
-        val selection = "${DbNames.FIELD_RUSSIAN} = ? AND ${DbNames.FIELD_ENGLISH} = ? AND ${DbNames.FIELD_STATE} = ?"
-        val selectionArguments = arrayOf<String>(word.russianWord, word.englishWord, word.wordState.name)
+    fun deleteWord(word: Word) {
+
+        val selection = "${DbNames.FIELD_RUSSIAN} = ? AND ${DbNames.FIELD_ENGLISH} = ?"
+        val selectionArguments = arrayOf<String>(word.russianWord, word.englishWord)
+
+        val deletedWords = db?.delete(DbNames.TABLE_WORDS, selection, selectionArguments)
     }
 
     fun clearDb() {

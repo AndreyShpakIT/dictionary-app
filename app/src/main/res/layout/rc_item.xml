@@ -23,12 +23,19 @@
             android:text="English"
             android:textColor="@color/white" />
 
-        <TextView
+        <!--<TextView
             android:id="@+id/tvState"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="State"
-            android:textColor="@color/white" />
+            android:textColor="@color/white" />-->
+
+        <ImageView
+            android:id="@+id/ivState"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginLeft="10dp"
+            />
 
 </LinearLayout>
