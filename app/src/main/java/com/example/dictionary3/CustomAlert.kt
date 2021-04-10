@@ -20,10 +20,10 @@ class CustomAlert(private val context: Context, private val clickListeners: Aler
         dialog.setContentView(R.layout.custom_alert_dialog)
 
         val text = dialog.findViewById<View>(R.id.tvWordTitle) as TextView
-        text.text = word.russianWord + " [${word.englishWord}]"
+        text.text = word.englishWord
 
-        val tvImage = dialog.findViewById<View>(R.id.ivWordState) as ImageView
-        tvImage.setImageResource(word.wordState.icon)
+        /*val tvImage = dialog.findViewById<View>(R.id.ivWordState) as ImageView
+        tvImage.setImageResource(word.wordState.icon)*/
 
         // Delete
         val deleteButton: Button = dialog.findViewById<View>(R.id.btn_dialog_delete) as Button

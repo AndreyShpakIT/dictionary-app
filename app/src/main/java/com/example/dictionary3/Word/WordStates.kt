@@ -3,7 +3,7 @@ package com.example.dictionary3.Word
 import com.example.dictionary3.R
 
 enum class WordStates(name: String, public var icon: Int) {
-    Green("Green", R.drawable.ic_green_word), Orange("Orange", R.drawable.ic_orange_word), Red("Red", R.drawable.state_red);
+    Green("Green", R.drawable.state_green), Orange("Orange", R.drawable.state_orange), Red("Red", R.drawable.state_red);
 
     companion object{
         fun convertToWordState(name: String?) : WordStates {
@@ -15,8 +15,8 @@ enum class WordStates(name: String, public var icon: Int) {
         }
         fun convertToWordState(iconId: Int) : WordStates {
             return when (iconId) {
-                R.drawable.ic_green_word -> Green
-                R.drawable.ic_orange_word -> Orange
+                R.drawable.state_green -> Green
+                R.drawable.state_orange -> Orange
                 else -> Red
             }
         }

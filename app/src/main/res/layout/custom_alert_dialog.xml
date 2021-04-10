@@ -24,17 +24,17 @@
                 android:id="@+id/tvWordTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center_vertical|center_horizontal"
+                android:gravity="center_horizontal|center_vertical"
                 android:text="Слово"
                 android:textColor="@color/white"
-                android:textSize="15dp" />
+                android:textSize="20dp" />
 
-            <ImageView
+           <!-- <ImageView
                 android:id="@+id/ivWordState"
                 android:layout_width="35dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="5dp"
-                android:layout_toRightOf="@id/tvWordTitle" />
+                android:layout_toRightOf="@id/tvWordTitle" />-->
 
         </LinearLayout>
 
@@ -49,11 +49,12 @@
         android:layout_below="@+id/a"
         android:layout_marginTop="10dp"
         android:fontFamily="sans-serif-light"
-        android:gravity="center_vertical|center_horizontal"
+        android:gravity="center"
+        android:paddingRight="50dp"
         android:text="Изменить"
         android:textColor="#ffffffff"
         app:icon="@drawable/ic_baseline_edit_note_24"
-        app:iconGravity="textEnd" />
+        app:iconGravity="start" />
 
     <Button
         android:id="@+id/btn_dialog_delete"
@@ -63,8 +64,10 @@
         android:layout_below="@+id/btn_dialog_change"
         android:layout_marginBottom="20dp"
         android:fontFamily="sans-serif-light"
+        android:gravity="center"
+        android:paddingRight="50dp"
         android:text="Удалить"
         app:icon="@drawable/ic_delete"
-        app:iconGravity="textEnd" />
+        app:iconGravity="start" />
 
 </RelativeLayout>
