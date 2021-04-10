@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary3.Word.Word
 import com.example.dictionary3.databinding.ActivityMainBinding
@@ -12,109 +13,50 @@ import com.example.dictionary3.db.DbManager
 import com.google.android.material.snackbar.Snackbar
 
 
-class MainActivity : AppCompatActivity(), CellLongClickListener, AlertDialogClickListeners, BottomDialogOnClickListener {
+class MainActivity : AppCompatActivity() {
 
     private val CODE: String = "MainActivity"
     private lateinit var bindingClass : ActivityMainBinding
-    private lateinit var rcAdapter : RcAdapter
-    private val db = DbManager(this)
+    private var fragmentId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
 
-        bindingClass.buttonNewWord.setOnClickListener {
-            /*val intent = Intent(this, AddActivity::class.java)
-            startActivity(intent)*/
+        bindingClass.navigationBar.setOnNavigationItemSelectedListener {  item ->
 
-            var bottomDialog = BottomFragmentSheet(this)
-            bottomDialog.show(supportFragmentManager, "TAG")
-
-        }
-
-        bindingClass.buttonResfresh.setOnClickListener() {
-            Log.d(CODE, "Refresh...")
-            refreshRcView()
-        }
-
-        rcAdapter = RcAdapter(ArrayList(), this, this)
-
-        db.openDb()
-        init()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        db.openDb()
-        refreshRcView()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        db.closeDb()
-    }
-
-    private fun init() {
-        bindingClass.rcView.layoutManager = LinearLayoutManager(this)
-        bindingClass.rcView.adapter = rcAdapter
-    }
-
-    private fun refreshRcView() {
-        rcAdapter.updateAdapter(db.getWordList())
-    }
-
-    override fun onCellLongClickListener(word: Word) : Boolean {
-
-        var alert = CustomAlert(this, this)
-        alert.showDialog(word)
-
-        return true
-    }
-
-    override fun onDeleteClickListener(word: Word) {
-        Log.d(CODE, "onDeleteClickListener works...")
-
-        val snackbar = Snackbar.make(
-            bindingClass.root,
-            "Вы уверены что хотите удалить слово: ${word.englishWord}?",
-            Snackbar.LENGTH_LONG
-        )
-
-        snackbar.setAction(
-            "Yes"
-        ) {
-            db.deleteWord(word)
-            refreshRcView()
-        }
-        snackbar.show()
-    }
-
-    override fun onChangeClickListener(word: Word) {
-
-        Log.d(CODE, "onChangeClickListener works...")
-    }
-
-    override fun onBottomDialogClickListener(word: Word) {
-
-        if (word.russianWord.isNullOrEmpty() || word.englishWord.isNullOrEmpty()) {
-            Toast.makeText(applicationContext, "Не все поля заполнены!", Toast.LENGTH_SHORT).show()
-        }
-        else {
-            var result : Long = db.addNewWord(word)
-            if (result > -1) {
-                Toast.makeText(applicationContext, "Слово добавлено!", Toast.LENGTH_SHORT).show()
-                refreshRcView()
+            if (item.itemId == fragmentId) {
+                Log.d(CODE, "Navigation the same.")
+                return@setOnNavigationItemSelectedListener false
             }
-            else {
-                if (result == (-2).toLong()) {
-                    Toast.makeText(applicationContext, "Слово уже существует", Toast.LENGTH_SHORT).show()
+
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    Log.d(CODE, "Navigation home works...")
+                    val homeFragment = HomeFragment.newInstance()
+                    openFragment(homeFragment)
                 }
-                else {
-                    Toast.makeText(applicationContext, "Не удалось добавить слово", Toast.LENGTH_SHORT).show()
+                R.id.navigation_training -> {
+                    Log.d(CODE, "Navigation training works...")
+                    val trainingFragment = TrainingFragment.newInstance()
+                    openFragment(trainingFragment)
                 }
+                R.id.navigation_settings -> {
+                    Log.d(CODE, "Navigation settings works...")
+                }
+                else -> return@setOnNavigationItemSelectedListener false
             }
+            fragmentId = item.itemId
+            return@setOnNavigationItemSelectedListener true
         }
+    }
+
+    private fun openFragment(fragment: Fragment) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(bindingClass.frameContainer.id, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 
 }

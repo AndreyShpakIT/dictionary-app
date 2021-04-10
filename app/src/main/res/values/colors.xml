@@ -9,20 +9,22 @@
     <color name="white">#FFFFFFFF</color>
 
     <!-- App colors -->
-    <color name="app_titlebarcolor">#121729</color>
+    <color name="app_titlebar_color">#121729</color>
     <color name="app_bgcolor">#0C111F</color>
     <color name="app_actionbar">#1C2642</color>
 
     <!-- List -->
     <color name="list_bgcolor">#151F39</color>
-    <color name="list_bordercolor">#202F57</color>
+    <color name="list_border_color">#202F57</color>
     <color name="list_item_bgcolor">#1B213E</color>
 
     <!-- Dialog -->
     <color name="dialog_bgcolor">#0E1426</color>
-    <color name="dialog_title_color">#151F3A</color>
+    <color name="dialog_title_color">#13224A</color>
 
-
+    <!-- Card -->
+    <color name="card_bgcolor">#26314E</color>
+    <color name="card_title_color">#202D4C</color>
 
     <!-- Other -->
     <color name="button_bgcolor">#2B3F75</color>

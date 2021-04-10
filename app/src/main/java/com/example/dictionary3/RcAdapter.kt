@@ -6,13 +6,13 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dictionary3.Word.Word
 import com.example.dictionary3.Word.WordStates
 import com.example.dictionary3.databinding.RcCardItemBinding
-import com.example.dictionary3.databinding.RcItemBinding
 
-class RcAdapter(private var list: ArrayList<Word>, private var context: Activity, private val cellLongClickListener: CellLongClickListener) : RecyclerView.Adapter<RcAdapter.Holder>() {
+class RcAdapter(private var list: ArrayList<Word>, private var context: Fragment, private val cellLongClickListener: CellLongClickListener) : RecyclerView.Adapter<RcAdapter.Holder>() {
 
     class Holder(binding: RcCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
 

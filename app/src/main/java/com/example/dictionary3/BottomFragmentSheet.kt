@@ -21,13 +21,6 @@ class BottomFragmentSheet(private val dialogOnClickListener: BottomDialogOnClick
     ): View? {
 
         binding = BottomSheetFragmentBinding.inflate(inflater, container, false)
-        /*var view = inflater.inflate(R.layout.bottom_sheet_fragment, container, false)
-        view.setOnClickListener() {
-
-            Log.d("BottomFragmentSheet", "Button Add works...")
-            *//*dialogOnClickListener.onClickListener()*//*
-        }*/
-
 
         binding.buttonBottomSheetDialogAdd.setOnClickListener {
             Log.d("BottomFragmentSheet", "Button Add works...")
