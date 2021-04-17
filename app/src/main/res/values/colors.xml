@@ -16,11 +16,14 @@
     <!-- List -->
     <color name="list_bgcolor">#151F39</color>
     <color name="list_border_color">#202F57</color>
-    <color name="list_item_bgcolor">#1B213E</color>
+    <color name="list_item_bgcolor">#551B213E</color>
 
     <!-- Dialog -->
     <color name="dialog_bgcolor">#0E1426</color>
     <color name="dialog_title_color">#13224A</color>
+
+    <!-- Bottom dialog -->
+    <color name="bottom_dialog_bgcolor">#0E1426</color>
 
     <!-- Card -->
     <color name="card_bgcolor">#26314E</color>
