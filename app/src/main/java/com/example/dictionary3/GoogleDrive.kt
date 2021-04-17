@@ -1,9 +1,9 @@
 package com.example.dictionary3
 
-class GoogleDrive {
+import android.app.Activity
 
-    fun Upload() {
-         // asfs
-    }
+class GoogleDrive(private var context: Activity) {
+
+
 
 }

@@ -1,6 +1,9 @@
 package com.example.dictionary3
 
+import android.app.Activity.RESULT_OK
+import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -10,11 +13,20 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary3.Word.Word
-import com.example.dictionary3.databinding.ActivityMainBinding
-import com.example.dictionary3.databinding.BottomSheetFragmentBinding
 import com.example.dictionary3.databinding.FragmentHomeBinding
 import com.example.dictionary3.db.DbManager
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
 import com.google.android.material.snackbar.Snackbar
+import com.google.api.client.extensions.android.http.AndroidHttp
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.api.client.json.gson.GsonFactory
+import com.google.api.services.drive.Drive
+import com.google.api.services.drive.DriveScopes
+import java.util.*
+import kotlin.collections.ArrayList
 
 class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListeners, BottomDialogOnClickListener {
 
@@ -25,10 +37,11 @@ class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListener
     private lateinit var appContext: Context
     private lateinit var db: DbManager
 
-
     companion object {
         fun newInstance() = HomeFragment()
     }
+
+    // region Life cycle
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -37,6 +50,7 @@ class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,7 +60,7 @@ class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListener
         db = DbManager(appContext)
 
         binding.buttonNewWord.setOnClickListener {
-            var bottomDialog = BottomFragmentSheet(this)
+            val bottomDialog = BottomFragmentSheet(this)
             bottomDialog.show(requireFragmentManager(), "TAG")
         }
 
@@ -72,6 +86,12 @@ class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListener
         super.onDestroy()
         db.closeDb()
     }
+
+
+
+    // endregion
+
+    // region Methods
 
     private fun init() {
         binding.rcView.layoutManager = LinearLayoutManager(appContext)
@@ -134,5 +154,36 @@ class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListener
             }
         }
     }
-    
+
+    // endregion
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

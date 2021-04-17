@@ -3,15 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/search"
+        android:id="@+id/actionbar_button_search"
         android:title="Search"
         android:icon="@drawable/icon_search"
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/favorite"
-        android:title="Drive"
+        android:id="@+id/actionbar_button_drive"
         android:icon="@drawable/icon_cloud"
-        app:showAsAction="ifRoom" />
+        android:title="Drive"
+        app:showAsAction="ifRoom">
 
+        <menu>
+            <item android:id="@+id/actionbar_button_upload"
+                android:title="Отправить" />
+            <item android:id="@+id/actionbar_button_download"
+                android:title="Получить" />
+            <item android:id="@+id/actionbar_button_check"
+                android:title="Проверить обновления" />
+            <item android:id="@+id/actionbar_button_change"
+                android:title="Сменить аккаунт" />
+        </menu>
+
+    </item>
+    <!--android:icon="@drawable/icon_cloud"-->
 </menu>
