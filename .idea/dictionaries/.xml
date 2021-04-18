@@ -2,7 +2,10 @@
   <dictionary name="Андрей">
     <words>
       <w>bgcolor</w>
+      <w>lwords</w>
+      <w>mimetype</w>
       <w>snackbar</w>
+      <w>sqlite</w>
     </words>
   </dictionary>
 </component>

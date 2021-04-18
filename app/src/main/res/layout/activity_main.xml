@@ -23,6 +23,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/app_actionbar"
             app:title="Словарик"
+            app:titleTextColor="@color/white"
             app:navigationIcon="@drawable/icon_books"
             app:menu="@menu/home_appbar_menu"
             >

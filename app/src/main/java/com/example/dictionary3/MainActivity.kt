@@ -4,15 +4,10 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary3.Word.Word
 import com.example.dictionary3.databinding.ActivityMainBinding
-import com.example.dictionary3.db.DbManager
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -25,49 +20,48 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import java.util.*
 
-
 class MainActivity : AppCompatActivity() {
 
-    private val CODE: String = "MainActivity"
+    private val _code: String = "MainActivity"
     private lateinit var bindingClass : ActivityMainBinding
     private var fragmentId: Int = 0
-
+    private val necessaryAuth: Boolean = true
     private var driveServiceHelper: DriveServiceHelper? = null
+
+    // region Life cycle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         bindingClass = ActivityMainBinding.inflate(layoutInflater)
         setContentView(bindingClass.root)
 
+        // region Handlers
+
         bindingClass.navigationBar.setOnNavigationItemSelectedListener {  item ->
 
             if (item.itemId == fragmentId) {
-                Log.d(CODE, "Navigation the same.")
+                Log.d(_code, "Navigation the same.")
                 return@setOnNavigationItemSelectedListener false
             }
 
             when (item.itemId) {
                 R.id.navigation_home -> {
-                    Log.d(CODE, "Navigation home works...")
+                    Log.d(_code, "Navigation home works...")
                     val homeFragment = HomeFragment.newInstance()
                     openFragment(homeFragment)
                 }
                 R.id.navigation_training -> {
-                    Log.d(CODE, "Navigation training works...")
+                    Log.d(_code, "Navigation training works...")
                     val trainingFragment = TrainingFragment.newInstance()
                     openFragment(trainingFragment)
                 }
                 R.id.navigation_settings -> {
-                    Log.d(CODE, "Navigation settings works...")
+                    Log.d(_code, "Navigation settings works...")
                 }
                 else -> return@setOnNavigationItemSelectedListener false
             }
             fragmentId = item.itemId
             return@setOnNavigationItemSelectedListener true
-        }
-
-        bindingClass.topAppBar.setNavigationOnClickListener {
-            // Handle navigation icon press
         }
 
         bindingClass.topAppBar.setOnMenuItemClickListener { menuItem ->
@@ -77,21 +71,21 @@ class MainActivity : AppCompatActivity() {
 
                     updateFile()
 
-                    Log.d(CODE, "actionbar_button_upload works...")
+                    Log.d(_code, "actionbar_button_upload works...")
                     true
                 }
 
                 R.id.actionbar_button_download -> {
 
-                    getFile()
+                    downloadFile()
 
-                    Log.d(CODE, "actionbar_button_download works...")
+                    Log.d(_code, "actionbar_button_download works...")
                     true
                 }
 
                 R.id.actionbar_button_check -> {
 
-                    Log.d(CODE, "actionbar_button_check works...")
+                    Log.d(_code, "actionbar_button_check works...")
                     true
                 }
 
@@ -99,12 +93,12 @@ class MainActivity : AppCompatActivity() {
 
                     signIn()
 
-                    Log.d(CODE, "actionbar_button_change works...")
+                    Log.d(_code, "actionbar_button_change works...")
                     true
                 }
 
                 R.id.actionbar_button_search ->{
-                    Log.d(CODE, "actionbar_button_search works...")
+                    Log.d(_code, "actionbar_button_search works...")
                     true
                 }
 
@@ -112,6 +106,8 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
+    // endregion
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -130,6 +126,12 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // endregion
+
+
+
+    // region Methods
+
     private fun openFragment(fragment: Fragment) {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(bindingClass.frameContainer.id, fragment)
@@ -140,37 +142,39 @@ class MainActivity : AppCompatActivity() {
     private fun showSnackbar(message: String) {
         val snackbar = Snackbar.make(
                 bindingClass.root,
-                "$message",
+                message,
                 Snackbar.LENGTH_LONG
         )
         snackbar.show()
     }
 
+    // endregion
+
     // region Google Drive
 
     private fun signIn() {
 
-        var signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestScopes(Scope(DriveScopes.DRIVE_FILE))
                 .build()
 
-        var client: GoogleSignInClient = GoogleSignIn.getClient(this, signInOptions)
-
+        val client: GoogleSignInClient = GoogleSignIn.getClient(this, signInOptions)
+        //client.signOut()
         startActivityForResult(client.signInIntent, 400)
     }
 
     private fun handleSignInIntent(data: Intent?) {
 
         GoogleSignIn.getSignedInAccountFromIntent(data)
-                .addOnSuccessListener() {
+                .addOnSuccessListener {
 
-                    var credential = GoogleAccountCredential
-                            .usingOAuth2(this, Collections.singleton(DriveScopes.DRIVE_FILE));
+                    val credential = GoogleAccountCredential
+                            .usingOAuth2(this, Collections.singleton(DriveScopes.DRIVE_FILE))
 
-                    credential.selectedAccount = it.account;
+                    credential.selectedAccount = it.account
 
-                    var googleDriveService = Drive.Builder(
+                    val googleDriveService = Drive.Builder(
                             AndroidHttp.newCompatibleTransport(),
                             GsonFactory(),
                             credential)
@@ -178,8 +182,9 @@ class MainActivity : AppCompatActivity() {
                             .build()
 
                     driveServiceHelper = DriveServiceHelper(googleDriveService)
+                    showSnackbar("Авторизация выполнена")
                 }
-                .addOnFailureListener() {
+                .addOnFailureListener {
                     showSnackbar("Авторизация не выполнена")
                 }
 
@@ -189,8 +194,13 @@ class MainActivity : AppCompatActivity() {
 
         if (driveServiceHelper == null) {
 
-            showSnackbar("Необходимо авторизоваться")
-            return;
+            if (necessaryAuth) {
+                showSnackbar("Необходимо авторизоваться")
+                return
+            }
+
+            signIn()
+
         }
 
         val progressDialog = ProgressDialog(this)
@@ -198,25 +208,29 @@ class MainActivity : AppCompatActivity() {
         progressDialog.setMessage("Пожалуйста подождите...")
         progressDialog.show()
 
-        val filePath: String = "/data/data/com.example.dictionary3/databases/Words.db"
-
-        driveServiceHelper?.createFile()
-                ?.addOnSuccessListener(){
+        driveServiceHelper?.createFileAsync(Version.getNowVersion().value)
+                ?.addOnSuccessListener {
                     progressDialog.dismiss()
 
                     showSnackbar("Файл успешно загружен")
                 }
-                ?.addOnFailureListener(){
+                ?.addOnFailureListener {
                     progressDialog.dismiss()
                     showSnackbar(it.message ?: "Пустое сообщение")
                 }
 
     }
+
     private fun getFile() {
         if (driveServiceHelper == null) {
 
-            showSnackbar("Необходимо авторизоваться")
-            return;
+            if (necessaryAuth) {
+                showSnackbar("Необходимо авторизоваться")
+                return
+            }
+
+            signIn()
+
         }
 
         val progressDialog = ProgressDialog(this)
@@ -224,23 +238,28 @@ class MainActivity : AppCompatActivity() {
         progressDialog.setMessage("Пожалуйста подождите...")
         progressDialog.show()
 
-        val filePath: String = driveServiceHelper!!.dbFilePath
-
         driveServiceHelper!!.getFileAsync()
-                .addOnSuccessListener(){
+                .addOnSuccessListener {
                     progressDialog.dismiss()
                     showSnackbar("Файл успешно получен. Id: ${it.id}")
                 }
-                .addOnFailureListener(){
+                .addOnFailureListener {
                     progressDialog.dismiss()
                     showSnackbar(it.message ?: "Пустое сообщение")
                 }
     }
-    private fun updateFile(){
+
+    private fun updateFile() {
+
         if (driveServiceHelper == null) {
 
-            showSnackbar("Необходимо авторизоваться")
-            return;
+            if (necessaryAuth) {
+                showSnackbar("Необходимо авторизоваться")
+                return
+            }
+
+            signIn()
+
         }
 
         val progressDialog = ProgressDialog(this)
@@ -248,14 +267,40 @@ class MainActivity : AppCompatActivity() {
         progressDialog.setMessage("Пожалуйста подождите...")
         progressDialog.show()
 
-        val filePath: String = driveServiceHelper!!.dbFilePath
-
-        driveServiceHelper!!.updateFile()
-                .addOnSuccessListener(){
+        driveServiceHelper!!.updateFileAsync()
+                .addOnSuccessListener {
                     progressDialog.dismiss()
-                    showSnackbar("Файл успешно обновлен.")
+                    showSnackbar("Файл успешно обновлен. Id: ${it.id}")
                 }
-                .addOnFailureListener(){
+                .addOnFailureListener {
+                    progressDialog.dismiss()
+                    showSnackbar(it.message ?: "Пустое сообщение")
+                }
+    }
+
+    private fun downloadFile() {
+        if (driveServiceHelper == null) {
+
+            if (necessaryAuth) {
+                showSnackbar("Необходимо авторизоваться")
+                return
+            }
+
+            signIn()
+
+        }
+
+        val progressDialog = ProgressDialog(this)
+        progressDialog.setTitle("Скачивание файла")
+        progressDialog.setMessage("Пожалуйста подождите...")
+        progressDialog.show()
+
+        driveServiceHelper!!.downloadFileAsync()
+                .addOnSuccessListener {
+                    progressDialog.dismiss()
+                    showSnackbar("Файл успешно скачан.")
+                }
+                .addOnFailureListener {
                     progressDialog.dismiss()
                     showSnackbar(it.message ?: "Пустое сообщение")
                 }

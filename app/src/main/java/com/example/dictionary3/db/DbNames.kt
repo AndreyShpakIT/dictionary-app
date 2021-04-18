@@ -1,12 +1,20 @@
 package com.example.dictionary3.db
 
+import android.annotation.SuppressLint
+import android.content.Context
 import android.provider.BaseColumns
 
 object DbNames : BaseColumns {
 
     // Data Base information
-    const val DATABASE_NAME = "Words.db"
     const val DATABASE_VERSION = 1
+    const val DATABASE_NAME = "Words.db"
+    const val DATABASE_TEMP_NAME = "TempWords.db"
+    const val DRIVE_DB_NAME = "AndroidWords.db"
+    const val DATABASE_MIMETYPE = "application/vnd.sqlite3"
+
+    const val DATABASE_PATH = "/data/data/com.example.dictionary3/databases/${DbNames.DATABASE_NAME}"
+    const val DATABASE_TEMP_PATH = "/data/data/com.example.dictionary3/databases/${DbNames.DATABASE_TEMP_NAME}"
 
     // Tables
     const val TABLE_WORDS = "Words"

@@ -22,7 +22,7 @@
             <item android:id="@+id/actionbar_button_check"
                 android:title="Проверить обновления" />
             <item android:id="@+id/actionbar_button_change"
-                android:title="Сменить аккаунт" />
+                android:title="Авторизация" />
         </menu>
 
     </item>
