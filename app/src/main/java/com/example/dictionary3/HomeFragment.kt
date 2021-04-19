@@ -99,10 +99,10 @@ class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListener
         rcAdapter.updateAdapter(db.getWordList())
     }
 
-    override fun onCellLongClickListener(word: Word) : Boolean {
+    override fun onCellLongClickListener(data: Word) : Boolean {
 
         val alert = CustomAlert(appContext, this)
-        alert.showDialog(word)
+        alert.showDialog(data)
 
         return true
     }
@@ -132,7 +132,7 @@ class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListener
 
     override fun onBottomDialogClickListener(word: Word) {
 
-        if (word.russianWord.isNullOrEmpty() || word.englishWord.isNullOrEmpty()) {
+        if (word.russianWord.isEmpty() || word.englishWord.isEmpty()) {
             Toast.makeText(appContext, "Не все поля заполнены!", Toast.LENGTH_SHORT).show()
         }
         else {

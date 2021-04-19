@@ -64,13 +64,13 @@ class DriveServiceHelper(private var mDriveService: Drive) {
 
             val id = driveFile.id ?: throw IOException("Не удалось обновить файл: id = null")
 
-            val driveVersion = Version(driveFile.description ?: throw IOException("Не удалось обновить файл: version = null"))
+            /*val driveVersion = Version(driveFile.description ?: throw IOException("Не удалось обновить файл: version = null"))
             val localVersion = Version.getLocalVersion()
             val newVersion = Version.getNowVersion()
 
             if (localVersion < driveVersion){
                 TODO("Необходимо обноление")
-            }
+            }*/
 
 
 
@@ -105,12 +105,13 @@ class DriveServiceHelper(private var mDriveService: Drive) {
             val driveFile = getFile() ?: throw IOException("Не удалось скачать файл: getFile() = null")
             val id = driveFile.id ?: throw IOException("Не удалось скачать файл: id = null")
 
-            val driveVersion = Version(driveFile.description ?: throw IOException("Не удалось скачать файл: version = null"))
+
+            /*val driveVersion = Version(driveFile.description ?: throw IOException("Не удалось скачать файл: version = null"))
             val localVersion = Version.getLocalVersion()
 
             if (localVersion >= driveVersion) {
                 throw Exception("Последняя версия уже установлена")
-            }
+            }*/
 
             try {
                 // Скачать файл
@@ -118,7 +119,7 @@ class DriveServiceHelper(private var mDriveService: Drive) {
                 mDriveService.files().get(id).executeMediaAndDownloadTo(FileOutputStream(DbNames.DATABASE_PATH))
                 //java.io.File(DbNames.DATABASE_TEMP_PATH).copyTo(java.io.File(DbNames.DATABASE_PATH), true)
 
-                Version.setLocalVersion(driveVersion)
+                //Version.setLocalVersion(driveVersion)
 
             } catch (e: Exception) {
                 throw IOException(e.message ?: "exception empty")

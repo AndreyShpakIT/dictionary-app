@@ -117,9 +117,13 @@ class MainActivity : AppCompatActivity() {
 
             // account intent
             400 -> {
-                if (resultCode == RESULT_OK) {
-                    handleSignInIntent(data)
+                handleSignInIntent(data)
+                /*if (resultCode == RESULT_OK) {
+
                 }
+                else {
+                    showSnackbar("Не удалось выполнить вход в Google account")
+                }*/
             }
 
         }
@@ -222,6 +226,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getFile() {
+
         if (driveServiceHelper == null) {
 
             if (necessaryAuth) {
@@ -311,17 +316,17 @@ class MainActivity : AppCompatActivity() {
 }
 
 
-// region Interfaces
-interface CellLongClickListener {
-    fun onCellLongClickListener(data: Word) : Boolean
-}
+    // region Interfaces
+    interface CellLongClickListener {
+        fun onCellLongClickListener(data: Word) : Boolean
+    }
 
-interface AlertDialogClickListeners {
-    fun onDeleteClickListener(word: Word)
-    fun onChangeClickListener(word: Word)
-}
+    interface AlertDialogClickListeners {
+        fun onDeleteClickListener(word: Word)
+        fun onChangeClickListener(word: Word)
+    }
 
-interface BottomDialogOnClickListener {
-    fun onBottomDialogClickListener(word: Word)
-}
-// endregion
+    interface BottomDialogOnClickListener {
+        fun onBottomDialogClickListener(word: Word)
+    }
+    // endregion
