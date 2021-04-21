@@ -118,12 +118,9 @@ class MainActivity : AppCompatActivity() {
             // account intent
             400 -> {
                 handleSignInIntent(data)
-                /*if (resultCode == RESULT_OK) {
+            }
+            500 -> {
 
-                }
-                else {
-                    showSnackbar("Не удалось выполнить вход в Google account")
-                }*/
             }
 
         }
@@ -164,7 +161,7 @@ class MainActivity : AppCompatActivity() {
                 .build()
 
         val client: GoogleSignInClient = GoogleSignIn.getClient(this, signInOptions)
-        //client.signOut()
+        client.signOut()
         startActivityForResult(client.signInIntent, 400)
     }
 
@@ -316,17 +313,3 @@ class MainActivity : AppCompatActivity() {
 }
 
 
-    // region Interfaces
-    interface CellLongClickListener {
-        fun onCellLongClickListener(data: Word) : Boolean
-    }
-
-    interface AlertDialogClickListeners {
-        fun onDeleteClickListener(word: Word)
-        fun onChangeClickListener(word: Word)
-    }
-
-    interface BottomDialogOnClickListener {
-        fun onBottomDialogClickListener(word: Word)
-    }
-    // endregion

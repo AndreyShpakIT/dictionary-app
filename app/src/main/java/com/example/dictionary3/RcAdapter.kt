@@ -1,7 +1,5 @@
 package com.example.dictionary3
 
-import android.app.Activity
-import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,14 +7,11 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dictionary3.Word.Word
-import com.example.dictionary3.Word.WordStates
 import com.example.dictionary3.databinding.RcCardItemBinding
 
-class RcAdapter(private var list: ArrayList<Word>, private var context: Fragment, private val cellLongClickListener: CellLongClickListener) : RecyclerView.Adapter<RcAdapter.Holder>() {
+class RcAdapter(private var list: ArrayList<Word>, private var context: Fragment, private val cellClickListener: CellListeners) : RecyclerView.Adapter<RcAdapter.Holder>() {
 
-    class Holder(binding: RcCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
-
-        var binding = binding
+    class Holder(private var binding: RcCardItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun setData(word: Word){
             binding.tvEnglish.text = word.englishWord
@@ -38,7 +33,11 @@ class RcAdapter(private var list: ArrayList<Word>, private var context: Fragment
         holder.setData(list[position])
 
         holder.itemView.setOnLongClickListener {
-            cellLongClickListener.onCellLongClickListener(list[position])
+            cellClickListener.onCellLongClickListener(list[position])
+        }
+
+        holder.itemView.setOnClickListener {
+            cellClickListener.onCellClickListener(list[position])
         }
 
     }

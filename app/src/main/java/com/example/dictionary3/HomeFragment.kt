@@ -1,6 +1,7 @@
 package com.example.dictionary3
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,7 +18,7 @@ import com.google.android.material.snackbar.Snackbar
 
 import kotlin.collections.ArrayList
 
-class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListeners, BottomDialogOnClickListener {
+class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, BottomDialogOnClickListener {
 
     private val _code: String = "HomeFragment"
 
@@ -105,6 +106,15 @@ class HomeFragment : Fragment(), CellLongClickListener, AlertDialogClickListener
         alert.showDialog(data)
 
         return true
+    }
+
+    override fun onCellClickListener(data: Word) {
+
+        activity?.let{
+            val intent = Intent (it, EditActivity::class.java)
+            it.startActivityForResult(intent, 500)
+        }
+
     }
 
     override fun onDeleteClickListener(word: Word) {

@@ -18,7 +18,7 @@ class BottomFragmentSheet(private val dialogOnClickListener: BottomDialogOnClick
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         binding = BottomSheetFragmentBinding.inflate(inflater, container, false)
 
