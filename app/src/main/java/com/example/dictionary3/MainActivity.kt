@@ -20,7 +20,7 @@ import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), com.example.dictionary3.Snackbar {
 
     private val _code: String = "MainActivity"
     private lateinit var bindingClass : ActivityMainBinding
@@ -107,7 +107,10 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-    // endregion
+        // endregion
+
+        val homeFragment = HomeFragment.newInstance()
+        openFragment(homeFragment)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -119,10 +122,6 @@ class MainActivity : AppCompatActivity() {
             400 -> {
                 handleSignInIntent(data)
             }
-            500 -> {
-
-            }
-
         }
 
     }
@@ -140,14 +139,14 @@ class MainActivity : AppCompatActivity() {
         transaction.commit()
     }
 
-    private fun showSnackbar(message: String) {
+    /*private fun showSnackbar(message: String) {
         val snackbar = Snackbar.make(
                 bindingClass.root,
                 message,
                 Snackbar.LENGTH_LONG
         )
         snackbar.show()
-    }
+    }*/
 
     // endregion
 
@@ -183,10 +182,10 @@ class MainActivity : AppCompatActivity() {
                             .build()
 
                     driveServiceHelper = DriveServiceHelper(googleDriveService)
-                    showSnackbar("Авторизация выполнена")
+                    showSnackbar(bindingClass.root,"Авторизация выполнена")
                 }
                 .addOnFailureListener {
-                    showSnackbar("Авторизация не выполнена")
+                    showSnackbar(bindingClass.root,"Авторизация не выполнена")
                 }
 
     }
@@ -196,7 +195,7 @@ class MainActivity : AppCompatActivity() {
         if (driveServiceHelper == null) {
 
             if (necessaryAuth) {
-                showSnackbar("Необходимо авторизоваться")
+                showSnackbar(bindingClass.root,"Необходимо авторизоваться")
                 return
             }
 
@@ -213,11 +212,11 @@ class MainActivity : AppCompatActivity() {
                 ?.addOnSuccessListener {
                     progressDialog.dismiss()
 
-                    showSnackbar("Файл успешно загружен")
+                    showSnackbar(bindingClass.root,"Файл успешно загружен")
                 }
                 ?.addOnFailureListener {
                     progressDialog.dismiss()
-                    showSnackbar(it.message ?: "Пустое сообщение")
+                    showSnackbar(bindingClass.root,it.message ?: "Пустое сообщение")
                 }
 
     }
@@ -227,7 +226,7 @@ class MainActivity : AppCompatActivity() {
         if (driveServiceHelper == null) {
 
             if (necessaryAuth) {
-                showSnackbar("Необходимо авторизоваться")
+                showSnackbar(bindingClass.root,"Необходимо авторизоваться")
                 return
             }
 
@@ -243,11 +242,11 @@ class MainActivity : AppCompatActivity() {
         driveServiceHelper!!.getFileAsync()
                 .addOnSuccessListener {
                     progressDialog.dismiss()
-                    showSnackbar("Файл успешно получен. Id: ${it.id}")
+                    showSnackbar(bindingClass.root,"Файл успешно получен. Id: ${it.id}")
                 }
                 .addOnFailureListener {
                     progressDialog.dismiss()
-                    showSnackbar(it.message ?: "Пустое сообщение")
+                    showSnackbar(bindingClass.root,it.message ?: "Пустое сообщение")
                 }
     }
 
@@ -256,7 +255,7 @@ class MainActivity : AppCompatActivity() {
         if (driveServiceHelper == null) {
 
             if (necessaryAuth) {
-                showSnackbar("Необходимо авторизоваться")
+                showSnackbar(bindingClass.root,"Необходимо авторизоваться")
                 return
             }
 
@@ -272,11 +271,11 @@ class MainActivity : AppCompatActivity() {
         driveServiceHelper!!.updateFileAsync()
                 .addOnSuccessListener {
                     progressDialog.dismiss()
-                    showSnackbar("Файл успешно обновлен. Id: ${it.id}")
+                    showSnackbar(bindingClass.root,"Файл успешно обновлен. Id: ${it.id}")
                 }
                 .addOnFailureListener {
                     progressDialog.dismiss()
-                    showSnackbar(it.message ?: "Пустое сообщение")
+                    showSnackbar(bindingClass.root,it.message ?: "Пустое сообщение")
                 }
     }
 
@@ -284,7 +283,7 @@ class MainActivity : AppCompatActivity() {
         if (driveServiceHelper == null) {
 
             if (necessaryAuth) {
-                showSnackbar("Необходимо авторизоваться")
+                showSnackbar(bindingClass.root,"Необходимо авторизоваться")
                 return
             }
 
@@ -300,11 +299,11 @@ class MainActivity : AppCompatActivity() {
         driveServiceHelper!!.downloadFileAsync()
                 .addOnSuccessListener {
                     progressDialog.dismiss()
-                    showSnackbar("Файл успешно скачан.")
+                    showSnackbar(bindingClass.root,"Файл успешно скачан.")
                 }
                 .addOnFailureListener {
                     progressDialog.dismiss()
-                    showSnackbar(it.message ?: "Пустое сообщение")
+                    showSnackbar(bindingClass.root,it.message ?: "Пустое сообщение")
                 }
     }
 

@@ -1,5 +1,6 @@
 package com.example.dictionary3
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -18,7 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 
 import kotlin.collections.ArrayList
 
-class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, BottomDialogOnClickListener {
+class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, BottomDialogOnClickListener, com.example.dictionary3.Snackbar {
 
     private val _code: String = "HomeFragment"
 
@@ -26,6 +27,8 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
     private lateinit var rcAdapter : RcAdapter
     private lateinit var appContext: Context
     private lateinit var db: DbManager
+
+    private var edPosition = 0
 
     companion object {
         fun newInstance() = HomeFragment()
@@ -43,13 +46,12 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
 
-        db = DbManager(appContext)
-
         // region Handlers
+
 
         binding.buttonNewWord.setOnClickListener {
             val bottomDialog = BottomFragmentSheet(this)
@@ -67,10 +69,13 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
             db.openDb()
         }
 
+        // endregion
+
+        openDb()
+
         rcAdapter = RcAdapter(ArrayList(), this, this)
         init()
-
-        // endregion
+        refreshRcView()
 
         return binding.root
     }
@@ -78,13 +83,26 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
     override fun onResume() {
         super.onResume()
         Log.d(_code, "OnResume()...")
-        db.openDb()
-        refreshRcView()
+        //openDb()
+        //refreshRcView()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         db.closeDb()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+
+            500 -> {
+                if (resultCode == Activity.RESULT_OK)
+                    editActivityDataHandler(data)
+            }
+
+        }
     }
 
     // endregion
@@ -108,13 +126,17 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
         return true
     }
 
-    override fun onCellClickListener(data: Word) {
+    override fun onCellClickListener(data: Word, pos: Int) {
 
         activity?.let{
             val intent = Intent (it, EditActivity::class.java)
-            it.startActivityForResult(intent, 500)
+
+            intent.putExtra("word", data)
+
+            startActivityForResult(intent, 500)
         }
 
+        edPosition = pos
     }
 
     override fun onDeleteClickListener(word: Word) {
@@ -164,6 +186,21 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
     // endregion
 
+    private fun editActivityDataHandler(data: Intent?){
+
+        val word = data?.extras?.get("res") as Word
+        showSnackbar(binding.root, "Слово: ${word.russianWord} | ${word.englishWord}")
+
+        rcAdapter.updateItem(word, edPosition)
+    }
+    private fun openDb(){
+        db = DbManager(appContext)
+        db.openDb()
+    }
+
+    private fun closeDb(){
+        db.closeDb()
+    }
 }
 
 

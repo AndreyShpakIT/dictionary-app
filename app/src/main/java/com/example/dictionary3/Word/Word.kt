@@ -1,6 +1,8 @@
 package com.example.dictionary3.Word
 
-class Word {
+import java.io.Serializable
+
+class Word : Serializable {
 
     var russianWord: String = ""
         set(value) {

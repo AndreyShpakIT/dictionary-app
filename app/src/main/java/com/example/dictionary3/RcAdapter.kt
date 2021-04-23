@@ -37,7 +37,7 @@ class RcAdapter(private var list: ArrayList<Word>, private var context: Fragment
         }
 
         holder.itemView.setOnClickListener {
-            cellClickListener.onCellClickListener(list[position])
+            cellClickListener.onCellClickListener(list[position], position)
         }
 
     }
@@ -50,5 +50,11 @@ class RcAdapter(private var list: ArrayList<Word>, private var context: Fragment
         list.clear()
         list.addAll(listItems)
         notifyDataSetChanged()
+    }
+
+    fun updateItem(word: Word, position: Int){
+        list[position] = word
+        notifyItemChanged(position)
+        //notifyDataSetChanged()
     }
 }

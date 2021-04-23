@@ -1,11 +1,13 @@
 package com.example.dictionary3
 
+import android.view.View
 import com.example.dictionary3.Word.Word
+import com.google.android.material.snackbar.Snackbar
 
 // region Interfaces
 interface CellListeners {
     fun onCellLongClickListener(data: Word) : Boolean
-    fun onCellClickListener(data: Word)
+    fun onCellClickListener(data: Word, pos: Int)
 }
 
 interface AlertDialogClickListeners {
@@ -15,6 +17,17 @@ interface AlertDialogClickListeners {
 
 interface BottomDialogOnClickListener {
     fun onBottomDialogClickListener(word: Word)
+}
+
+interface Snackbar {
+    fun showSnackbar(view: View, message: String) {
+        val snackbar = Snackbar.make(
+                view,
+                message,
+                Snackbar.LENGTH_LONG
+        )
+        snackbar.show()
+    }
 }
 
 // endregion
