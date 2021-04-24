@@ -58,17 +58,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
             bottomDialog.show(requireFragmentManager(), "TAG")
         }
 
-        binding.buttonResfresh.setOnClickListener {
-            Log.d(_code, "Refresh...")
-            refreshRcView()
-        }
-
-        binding.testButton.setOnClickListener {
-            db.closeDb()
-            db = DbManager(appContext, DbNames.DATABASE_TEMP_NAME)
-            db.openDb()
-        }
-
         // endregion
 
         openDb()
@@ -115,7 +104,9 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
     }
 
     private fun refreshRcView() {
+
         rcAdapter.updateAdapter(db.getWordList())
+
     }
 
     override fun onCellLongClickListener(data: Word) : Boolean {
@@ -128,7 +119,7 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
     override fun onCellClickListener(data: Word, pos: Int) {
 
-        activity?.let{
+        activity?.let {
             val intent = Intent (it, EditActivity::class.java)
 
             intent.putExtra("word", data)
@@ -142,7 +133,7 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
     override fun onDeleteClickListener(word: Word) {
         Log.d(_code, "onDeleteClickListener works...")
 
-        val snackbar = Snackbar.make(
+        val snackbar = Snackbar.make (
             binding.root,
             "Вы уверены что хотите удалить слово: ${word.englishWord}?",
             Snackbar.LENGTH_LONG
@@ -189,16 +180,18 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
     private fun editActivityDataHandler(data: Intent?){
 
         val word = data?.extras?.get("res") as Word
-        showSnackbar(binding.root, "Слово: ${word.russianWord} | ${word.englishWord}")
+        showSnackbar(binding.root, "Слово изменено: ${word.russianWord} | ${word.englishWord} (${word.id})")
+
+        db.updateWord(word)
 
         rcAdapter.updateItem(word, edPosition)
     }
-    private fun openDb(){
+    private fun openDb() {
         db = DbManager(appContext)
         db.openDb()
     }
 
-    private fun closeDb(){
+    private fun closeDb() {
         db.closeDb()
     }
 }

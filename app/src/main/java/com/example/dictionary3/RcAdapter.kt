@@ -55,6 +55,5 @@ class RcAdapter(private var list: ArrayList<Word>, private var context: Fragment
     fun updateItem(word: Word, position: Int){
         list[position] = word
         notifyItemChanged(position)
-        //notifyDataSetChanged()
     }
 }

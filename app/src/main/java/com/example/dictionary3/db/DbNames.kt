@@ -1,7 +1,5 @@
 package com.example.dictionary3.db
 
-import android.annotation.SuppressLint
-import android.content.Context
 import android.provider.BaseColumns
 
 object DbNames : BaseColumns {
@@ -21,7 +19,7 @@ object DbNames : BaseColumns {
     const val TABLE_LWORDS = "LearningWords"
 
     // Words fields
-    const val FIELD_WORDS_ID = "WordID"
+    const val FIELD_WORD_ID = "WordID"
     const val FIELD_RUSSIAN = "RussianWord"
     const val FIELD_ENGLISH = "EnglishWord"
     const val FIELD_STATE = "State"
@@ -32,7 +30,7 @@ object DbNames : BaseColumns {
     // SQL queries
     const val SQL_CREATE_TABLE_WORDS =
         "CREATE TABLE IF NOT EXISTS $TABLE_WORDS(" +
-                "$FIELD_WORDS_ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "$FIELD_WORD_ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
                 "$FIELD_RUSSIAN TEXT , " +
                 "$FIELD_ENGLISH TEXT, " +
                 "$FIELD_STATE TEXT)"

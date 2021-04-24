@@ -24,9 +24,8 @@ class AddActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext, "Не все поля заполнены!", Toast.LENGTH_SHORT).show()
             }
             else {
-                var word = Word()
 
-                var result : Long = db.addNewWord(Word(bindingClass.editRussianWord.text.toString(), bindingClass.editEnglishWord.text.toString()))
+                val result : Long = db.addNewWord(Word(bindingClass.editRussianWord.text.toString(), bindingClass.editEnglishWord.text.toString()))
                 if (result > -1) {
                     Toast.makeText(applicationContext, "Слово добавлено!", Toast.LENGTH_SHORT).show()
                 }

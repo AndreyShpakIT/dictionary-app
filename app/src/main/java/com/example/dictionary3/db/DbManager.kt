@@ -1,6 +1,5 @@
 package com.example.dictionary3.db
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -60,7 +59,7 @@ class DbManager(val context: Context, private val dbName: String = DbNames.DATAB
         var russianWord: String = ""
         var englishWord: String = ""
         var wordState: WordStates = WordStates.Red
-
+        var id = -1
 
         with(cursor) {
             while (this?.moveToNext()!!) {
@@ -68,8 +67,9 @@ class DbManager(val context: Context, private val dbName: String = DbNames.DATAB
                 russianWord = getString(getColumnIndex(DbNames.FIELD_RUSSIAN)) ?: "-"
                 englishWord = getString(getColumnIndex(DbNames.FIELD_ENGLISH)) ?: "-"
                 wordState = WordStates.convertToWordState(getString(getColumnIndex(DbNames.FIELD_STATE)))
+                id = getInt(getColumnIndex(DbNames.FIELD_WORD_ID)) ?: -1
 
-                dataList.add(Word(russianWord, englishWord, wordState))
+                dataList.add(Word(russianWord, englishWord, wordState, id))
             }
         }
 
@@ -83,6 +83,16 @@ class DbManager(val context: Context, private val dbName: String = DbNames.DATAB
         val selectionArguments = arrayOf<String>(word.russianWord, word.englishWord)
 
         val deletedWords = db?.delete(DbNames.TABLE_WORDS, selection, selectionArguments)
+    }
+
+    fun updateWord(word: Word) {
+
+        val contentValues = ContentValues()
+        contentValues.put(DbNames.FIELD_ENGLISH, word.englishWord)
+        contentValues.put(DbNames.FIELD_RUSSIAN, word.russianWord)
+        contentValues.put(DbNames.FIELD_STATE, word.wordState.name)
+
+        db?.update(DbNames.TABLE_WORDS, contentValues, "${DbNames.FIELD_WORD_ID } = ?", arrayOf(word.id.toString()))
     }
 
     fun clearDb() {

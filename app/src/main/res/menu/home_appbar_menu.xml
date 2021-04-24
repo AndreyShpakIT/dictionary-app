@@ -3,12 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/actionbar_button_search"
-        android:title="Search"
-        android:icon="@drawable/icon_search"
-        app:showAsAction="ifRoom" />
-
-    <item
         android:id="@+id/actionbar_button_drive"
         android:icon="@drawable/icon_cloud"
         android:title="Drive"

@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
 import com.example.dictionary3.Word.Word
 import com.example.dictionary3.Word.WordStates
@@ -16,6 +17,7 @@ class EditActivity : AppCompatActivity() {
     private val _code = "EditActivity"
     private lateinit var bindingClass: ActivityEditBinding
     private lateinit var edWord:Word
+    private lateinit var spinnerAdapter: SpinnerStateAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +26,7 @@ class EditActivity : AppCompatActivity() {
         setContentView(bindingClass.root)
 
         edWord = getWordFromIntent()
+        spinnerAdapter = SpinnerStateAdapter(this)
 
         initFields()
 
@@ -32,23 +35,26 @@ class EditActivity : AppCompatActivity() {
 
     private fun initFields() {
 
-        //bindingClass.spinner.
+        bindingClass.spinner.adapter = spinnerAdapter
+
+        val pos =
+        when (edWord.wordState){
+            WordStates.Green -> 0
+            WordStates.Orange -> 1
+            WordStates.Red -> 2
+        }
+        bindingClass.spinner.setSelection(pos)
 
         bindingClass.edEditEnglish.hint = edWord.englishWord
         bindingClass.edEditRussian.hint = edWord.russianWord
 
         bindingClass.edEditEnglish.setText(edWord.englishWord)
         bindingClass.edEditRussian.setText(edWord.russianWord)
-        bindingClass.ivEditState.setImageResource(edWord.wordState.icon)
     }
 
     private fun initHandlers() {
         bindingClass.buttonEdit.setOnClickListener {
             returnData()
-        }
-
-        bindingClass.buttonEditState.setOnClickListener {
-
         }
     }
 
@@ -60,6 +66,7 @@ class EditActivity : AppCompatActivity() {
 
         edWord.russianWord = bindingClass.edEditRussian.text.toString()
         edWord.englishWord = bindingClass.edEditEnglish.text.toString()
+        edWord.wordState = bindingClass.spinner.selectedItem as WordStates
 
         val intent = Intent()
         intent.putExtra("res", edWord)
