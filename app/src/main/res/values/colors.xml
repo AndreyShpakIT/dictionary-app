@@ -28,11 +28,15 @@
     <!-- Card -->
     <color name="card_bgcolor">#26314E</color>
     <color name="card_title_color">#202D4C</color>
+    <color name="card_light_background">#FFFFFF</color>
+    <color name="card_light_background_selected">#DFDFDF</color>
 
     <!-- Other -->
     <color name="button_bgcolor">#2B3F75</color>
     <color name="light_gray">#ACACAC</color>
 
     <color name="very_light_gray">#E8E8E8</color>
+
+
 
 </resources>

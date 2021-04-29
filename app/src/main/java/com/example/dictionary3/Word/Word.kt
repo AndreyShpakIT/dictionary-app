@@ -16,6 +16,8 @@ class Word : Serializable {
         }
     var wordState: WordStates = WordStates.Red
 
+    var isSelected: Boolean = false
+
     constructor (russian: String, english: String, state: WordStates = WordStates.Red) {
         russianWord = russian
         englishWord = english

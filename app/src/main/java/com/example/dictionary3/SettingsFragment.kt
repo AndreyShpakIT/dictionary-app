@@ -15,45 +15,37 @@ class SettingsFragment : Fragment() {
     lateinit var binding: FragmentSettingsBinding
     private lateinit var rcAdapter : RcAdapter
 
+    companion object {
+        fun newInstance() = SettingsFragment()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
-
         initializeHandlers()
-
         return binding.root
     }
 
     private fun initializeHandlers() {
 
         binding.buttonEditLWords.setOnClickListener {
-
             val intent = Intent(activity, LearningListActivity::class.java)
             startActivity(intent)
         }
 
         binding.switchTheme.setOnCheckedChangeListener { _, isChecked ->
 
-            if (isChecked)
+            /*if (isChecked)
                 activity?.setTheme(R.style.Theme_Black)
             else
-                activity?.setTheme(R.style.Theme_Light)
+                activity?.setTheme(R.style.Theme_Light)*/
 
         }
 
     }
-
-    companion object {
-        fun newInstance() = SettingsFragment()
-    }
-
 }

@@ -50,18 +50,19 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
         fun newInstance() = HomeFragment()
     }
 
+
+
+
     // region Life cycle
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         appContext = context
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -123,19 +124,16 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
         return binding.root
     }
-
     override fun onResume() {
         super.onResume()
         Log.d(_code, "OnResume()...")
         //openDb()
         //refreshRcView()
     }
-
     override fun onDestroyView() {
         super.onDestroyView()
         db.closeDb()
     }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -152,7 +150,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
         }
     }
-
     override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
 
         menuInflater.inflate(R.menu.home_appbar_menu, menu)
@@ -181,13 +178,15 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
     // endregion
 
+
+
+
     // region Methods
 
     private fun init() {
         binding.rcView.layoutManager = LinearLayoutManager(appContext)
         binding.rcView.adapter = rcAdapter
     }
-
     private fun refreshRcView() {
 
         binding.progressBar.visibility = View.VISIBLE
@@ -201,7 +200,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
                 binding.progressBar.visibility = View.INVISIBLE
             }
     }
-
     override fun onCellClickListener(data: Word, pos: Int) {
 
         activity?.let {
@@ -214,7 +212,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
         edPosition = pos
     }
-
     override fun onDeleteClickListener(word: Word) {
         Log.d(_code, "onDeleteClickListener works...")
 
@@ -232,12 +229,10 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
         }
         snackbar.show()
     }
-
     override fun onChangeClickListener(word: Word) {
 
         Log.d(_code, "onChangeClickListener works...")
     }
-
     override fun onBottomDialogClickListener(word: Word) {
 
         if (word.russianWord.isEmpty() || word.englishWord.isEmpty()) {
@@ -259,9 +254,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
             }
         }
     }
-
-    // endregion
-
     private fun editActivityDataHandler(data: Intent?) {
 
         val word = data?.extras?.get("res") as Word
@@ -279,6 +271,11 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
         db.closeDb()
     }
 
+    // endregion
+
+
+
+
     // region Google Drive
 
     private fun signIn() {
@@ -292,7 +289,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
         client.signOut()
         startActivityForResult(client.signInIntent, 400)
     }
-
     private fun handleSignInIntent(data: Intent?) {
 
         GoogleSignIn.getSignedInAccountFromIntent(data)
@@ -318,7 +314,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
                 }
 
     }
-
     private fun uploadFile() {
 
         if (driveServiceHelper == null) {
@@ -349,7 +344,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
                 }
 
     }
-
     private fun getFile() {
 
         if (driveServiceHelper == null) {
@@ -378,7 +372,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
                     showSnackbar(binding.root, it.message ?: "Пустое сообщение")
                 }
     }
-
     private fun updateFile() {
 
         if (driveServiceHelper == null) {
@@ -407,7 +400,6 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
                     showSnackbar(binding.root, it.message ?: "Пустое сообщение")
                 }
     }
-
     private fun downloadFile() {
         if (driveServiceHelper == null) {
 

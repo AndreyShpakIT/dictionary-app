@@ -17,41 +17,27 @@ class AddLWordActivity : AppCompatActivity(), CellListeners {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityAddLWordBinding.inflate(layoutInflater)
-
         setContentView(binding.root)
 
-        rcAdapter = RcAdapter(ArrayList(), this)
+        initRecyclerView()
 
-        init()
-        val list = getDataFromIntent()
+        val list = intent.extras?.get("availableList") as ArrayList<Word>
         rcAdapter.updateAdapter(list)
     }
 
-    private fun getDataFromIntent(): ArrayList<Word> {
-        return intent.extras?.get("availableList") as ArrayList<Word>
-    }
 
-    private fun init() {
+
+    private fun initRecyclerView() {
+        rcAdapter = RcAdapter(ArrayList(), this)
         binding.rcEnabledLWords.layoutManager = LinearLayoutManager(this)
         binding.rcEnabledLWords.adapter = rcAdapter
     }
-
     override fun onCellClickListener(data: Word, pos: Int) {
-
-        returnData(data)
-        finish()
-
-    }
-
-    private fun returnData(data: Word) {
-
         val intent = Intent()
         intent.putExtra("res", data)
         setResult(RESULT_OK, intent)
 
         finish()
     }
-
 }

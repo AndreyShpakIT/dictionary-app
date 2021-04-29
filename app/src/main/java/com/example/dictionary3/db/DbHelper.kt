@@ -21,6 +21,8 @@ class DbHelper(context: Context, private val dbName: String) : SQLiteOpenHelper(
         db?.execSQL(DbNames.SQL_DELETE_LWORDS)
 
         onCreate(db)
+
+
     }
 
 }
