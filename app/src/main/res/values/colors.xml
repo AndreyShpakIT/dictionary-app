@@ -33,4 +33,6 @@
     <color name="button_bgcolor">#2B3F75</color>
     <color name="light_gray">#ACACAC</color>
 
+    <color name="very_light_gray">#E8E8E8</color>
+
 </resources>

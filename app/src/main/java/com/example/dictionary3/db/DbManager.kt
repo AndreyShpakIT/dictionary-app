@@ -3,11 +3,18 @@ package com.example.dictionary3.db
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.provider.UserDictionary
 import android.util.Log
 import com.example.dictionary3.Word.Word
 import com.example.dictionary3.Word.WordStates
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 class DbManager(val context: Context, private val dbName: String = DbNames.DATABASE_NAME) {
+
+    private val mExecutor: Executor = Executors.newSingleThreadExecutor()
 
     private val _code = "DbManager"
     private val dbHelper = DbHelper(context, dbName)
@@ -77,6 +84,65 @@ class DbManager(val context: Context, private val dbName: String = DbNames.DATAB
         return dataList
     }
 
+    fun getLearningWordList() : ArrayList<Word> {
+        val dataList = ArrayList<Word>()
+
+        val cursor = db?.query(DbNames.TABLE_LWORDS, null, null, null, null, null, null)
+
+        var russianWord: String = ""
+        var englishWord: String = ""
+        var wordState: WordStates = WordStates.Red
+        var id = -1
+
+        if (cursor == null)
+        {
+            cursor?.close()
+            return dataList
+        }
+
+        with(cursor) {
+            while (this.moveToNext()) {
+
+                russianWord = getString(getColumnIndex(DbNames.FIELD_RUSSIAN)) ?: "-"
+                englishWord = getString(getColumnIndex(DbNames.FIELD_ENGLISH)) ?: "-"
+                wordState = WordStates.convertToWordState(getString(getColumnIndex(DbNames.FIELD_STATE)))
+                id = getInt(getColumnIndex(DbNames.FIELD_WORD_ID)) ?: -1
+
+                dataList.add(Word(russianWord, englishWord, wordState, id))
+
+            }
+        }
+
+        cursor.close()
+        return dataList
+    }
+
+    fun getEnabledLearningWordList() : ArrayList<Word> {
+        val dataList = ArrayList<Word>()
+
+        val cursor = db?.query(DbNames.TABLE_WORDS, null, null, null, null, null, null)
+
+        var russianWord: String = ""
+        var englishWord: String = ""
+        var wordState: WordStates = WordStates.Red
+        var id = -1
+
+        with(cursor) {
+            while (this?.moveToNext()!!) {
+
+                russianWord = getString(getColumnIndex(DbNames.FIELD_RUSSIAN)) ?: "-"
+                englishWord = getString(getColumnIndex(DbNames.FIELD_ENGLISH)) ?: "-"
+                wordState = WordStates.convertToWordState(getString(getColumnIndex(DbNames.FIELD_STATE)))
+                id = getInt(getColumnIndex(DbNames.FIELD_WORD_ID)) ?: -1
+
+                dataList.add(Word(russianWord, englishWord, wordState, id))
+            }
+        }
+
+        cursor?.close()
+        return dataList
+    }
+
     fun deleteWord(word: Word) {
 
         val selection = "${DbNames.FIELD_RUSSIAN} = ? AND ${DbNames.FIELD_ENGLISH} = ?"
@@ -104,6 +170,37 @@ class DbManager(val context: Context, private val dbName: String = DbNames.DATAB
         db?.execSQL(DbNames.SQL_DELETE_WORDS)
         db?.execSQL(DbNames.SQL_DELETE_LWORDS)
         Log.w(_code, "База дынных удалена")
+    }
+
+    fun getWordListAsync() : Task<ArrayList<Word>> {
+
+        return Tasks.call(mExecutor, {
+
+            val dataList = ArrayList<Word>()
+
+            val cursor = db?.query(DbNames.TABLE_WORDS, null, null, null, null, null, null)
+
+            var russianWord: String = ""
+            var englishWord: String = ""
+            var wordState: WordStates = WordStates.Red
+            var id = -1
+
+            with(cursor) {
+                while (this?.moveToNext()!!) {
+
+                    russianWord = getString(getColumnIndex(DbNames.FIELD_RUSSIAN)) ?: "-"
+                    englishWord = getString(getColumnIndex(DbNames.FIELD_ENGLISH)) ?: "-"
+                    wordState = WordStates.convertToWordState(getString(getColumnIndex(DbNames.FIELD_STATE)))
+                    id = getInt(getColumnIndex(DbNames.FIELD_WORD_ID)) ?: -1
+
+                    dataList.add(Word(russianWord, englishWord, wordState, id))
+                }
+            }
+
+            cursor?.close()
+            return@call dataList
+
+        })
     }
 
 }

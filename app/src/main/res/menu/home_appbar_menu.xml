@@ -1,24 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/icon_search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="always"
+        android:title="Поиск"
+        />
+
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/icon_filter"
+        android:title="Фильтр"
+        app:showAsAction="never"
+        />
+
+    <item
+        android:id="@+id/action_sort"
+        android:icon="@drawable/icon_sort"
+        app:showAsAction="never"
+        android:title="Сортировка"
+        />
 
     <item
         android:id="@+id/actionbar_button_drive"
         android:icon="@drawable/icon_cloud"
         android:title="Drive"
-        app:showAsAction="ifRoom">
+        app:showAsAction="always"
+        >
 
         <menu>
             <item android:id="@+id/actionbar_button_upload"
-                android:title="Отправить" />
+                android:title="Отправить"/>
             <item android:id="@+id/actionbar_button_download"
-                android:title="Получить" />
+                android:title="Скачать"/>
             <item android:id="@+id/actionbar_button_check"
-                android:title="Проверить обновления" />
+                android:title="Проверить обновления"/>
             <item android:id="@+id/actionbar_button_change"
-                android:title="Авторизация/Выход" />
+                android:title="Авторизация/Выход"/>
         </menu>
 
     </item>
-    <!--android:icon="@drawable/icon_cloud"-->
 </menu>

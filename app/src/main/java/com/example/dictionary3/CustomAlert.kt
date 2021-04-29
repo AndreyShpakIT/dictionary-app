@@ -1,12 +1,10 @@
 package com.example.dictionary3
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.view.View
 import android.view.Window
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
 import com.example.dictionary3.Word.Word
 

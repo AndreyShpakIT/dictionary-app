@@ -6,7 +6,6 @@ import com.google.android.material.snackbar.Snackbar
 
 // region Interfaces
 interface CellListeners {
-    fun onCellLongClickListener(data: Word) : Boolean
     fun onCellClickListener(data: Word, pos: Int)
 }
 

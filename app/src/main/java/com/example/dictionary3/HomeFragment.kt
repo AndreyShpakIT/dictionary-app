@@ -1,27 +1,43 @@
 package com.example.dictionary3
 
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.SearchView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dictionary3.Word.Word
 import com.example.dictionary3.databinding.FragmentHomeBinding
 import com.example.dictionary3.db.DbManager
-import com.example.dictionary3.db.DbNames
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.Scope
 import com.google.android.material.snackbar.Snackbar
-
+import com.google.api.client.extensions.android.http.AndroidHttp
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.api.client.json.gson.GsonFactory
+import com.google.api.services.drive.Drive
+import com.google.api.services.drive.DriveScopes
+import java.util.*
 import kotlin.collections.ArrayList
+
 
 class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, BottomDialogOnClickListener, com.example.dictionary3.Snackbar {
 
+    private var searchView: SearchView? = null
+    private var queryTextListener: SearchView.OnQueryTextListener? = null
+
     private val _code: String = "HomeFragment"
+
+    private val necessaryAuth: Boolean = true
+    private var driveServiceHelper: DriveServiceHelper? = null
 
     private lateinit var binding : FragmentHomeBinding
     private lateinit var rcAdapter : RcAdapter
@@ -43,7 +59,7 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -52,17 +68,56 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
         // region Handlers
 
-
         binding.buttonNewWord.setOnClickListener {
             val bottomDialog = BottomFragmentSheet(this)
             bottomDialog.show(requireFragmentManager(), "TAG")
         }
 
+        binding.topAppBar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+
+                R.id.actionbar_button_upload -> {
+
+                    updateFile()
+
+                    Log.d(_code, "actionbar_button_upload works...")
+                    true
+                }
+
+                R.id.actionbar_button_download -> {
+
+                    downloadFile()
+
+                    Log.d(_code, "actionbar_button_download works...")
+                    true
+                }
+
+                R.id.actionbar_button_check -> {
+
+                    Log.d(_code, "actionbar_button_check works...")
+                    true
+                }
+
+                R.id.actionbar_button_change -> {
+
+                    signIn()
+
+                    Log.d(_code, "actionbar_button_change works...")
+                    true
+                }
+
+                else -> false
+            }
+
+        }
+
+
+
         // endregion
 
         openDb()
 
-        rcAdapter = RcAdapter(ArrayList(), this, this)
+        rcAdapter = RcAdapter(ArrayList(), this)
         init()
         refreshRcView()
 
@@ -90,8 +145,38 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
                 if (resultCode == Activity.RESULT_OK)
                     editActivityDataHandler(data)
             }
+            // account intent
+            400 -> {
+                handleSignInIntent(data)
+            }
 
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+
+        menuInflater.inflate(R.menu.home_appbar_menu, menu)
+        val myActionMenuItem = menu.findItem(R.id.action_search)
+
+        searchView = myActionMenuItem.actionView as SearchView
+        searchView!!.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                // Toast like print
+                Log.d(_code, "works...: $query")
+                if (!searchView!!.isIconified) {
+                    searchView!!.isIconified = true
+                }
+                myActionMenuItem.collapseActionView()
+                return false
+            }
+
+            override fun onQueryTextChange(s: String): Boolean {
+                Log.d(_code, "works 2...: $s")
+                return false
+            }
+        })
+        //return true
     }
 
     // endregion
@@ -105,22 +190,22 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
     private fun refreshRcView() {
 
-        rcAdapter.updateAdapter(db.getWordList())
-
-    }
-
-    override fun onCellLongClickListener(data: Word) : Boolean {
-
-        val alert = CustomAlert(appContext, this)
-        alert.showDialog(data)
-
-        return true
+        binding.progressBar.visibility = View.VISIBLE
+        db.getWordListAsync()
+            .addOnSuccessListener {
+                rcAdapter.updateAdapter(it)
+                binding.progressBar.visibility = View.INVISIBLE
+            }
+            .addOnFailureListener {
+                showSnackbar(binding.root,"Не удалось обратиться к базе данных")
+                binding.progressBar.visibility = View.INVISIBLE
+            }
     }
 
     override fun onCellClickListener(data: Word, pos: Int) {
 
         activity?.let {
-            val intent = Intent (it, EditActivity::class.java)
+            val intent = Intent(it, EditActivity::class.java)
 
             intent.putExtra("word", data)
 
@@ -133,14 +218,14 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
     override fun onDeleteClickListener(word: Word) {
         Log.d(_code, "onDeleteClickListener works...")
 
-        val snackbar = Snackbar.make (
-            binding.root,
-            "Вы уверены что хотите удалить слово: ${word.englishWord}?",
-            Snackbar.LENGTH_LONG
+        val snackbar = Snackbar.make(
+                binding.root,
+                "Вы уверены что хотите удалить слово: ${word.englishWord}?",
+                Snackbar.LENGTH_LONG
         )
 
         snackbar.setAction(
-            "Yes"
+                "Yes"
         ) {
             db.deleteWord(word)
             refreshRcView()
@@ -177,7 +262,7 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
     // endregion
 
-    private fun editActivityDataHandler(data: Intent?){
+    private fun editActivityDataHandler(data: Intent?) {
 
         val word = data?.extras?.get("res") as Word
         showSnackbar(binding.root, "Слово изменено: ${word.russianWord} | ${word.englishWord} (${word.id})")
@@ -190,10 +275,168 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
         db = DbManager(appContext)
         db.openDb()
     }
-
     private fun closeDb() {
         db.closeDb()
     }
+
+    // region Google Drive
+
+    private fun signIn() {
+
+        val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestScopes(Scope(DriveScopes.DRIVE_FILE))
+                .build()
+
+        val client: GoogleSignInClient = GoogleSignIn.getClient(appContext, signInOptions)
+        client.signOut()
+        startActivityForResult(client.signInIntent, 400)
+    }
+
+    private fun handleSignInIntent(data: Intent?) {
+
+        GoogleSignIn.getSignedInAccountFromIntent(data)
+                .addOnSuccessListener {
+
+                    val credential = GoogleAccountCredential
+                            .usingOAuth2(appContext, Collections.singleton(DriveScopes.DRIVE_FILE))
+
+                    credential.selectedAccount = it.account
+
+                    val googleDriveService = Drive.Builder(
+                            AndroidHttp.newCompatibleTransport(),
+                            GsonFactory(),
+                            credential)
+                            .setApplicationName("Android Dictionary")
+                            .build()
+
+                    driveServiceHelper = DriveServiceHelper(googleDriveService)
+                    showSnackbar(binding.root, "Авторизация выполнена")
+                }
+                .addOnFailureListener {
+                    showSnackbar(binding.root, "Авторизация не выполнена")
+                }
+
+    }
+
+    private fun uploadFile() {
+
+        if (driveServiceHelper == null) {
+
+            if (necessaryAuth) {
+                showSnackbar(binding.root, "Необходимо авторизоваться")
+                return
+            }
+
+            signIn()
+
+        }
+
+        val progressDialog = ProgressDialog(appContext)
+        progressDialog.setTitle("Отправка")
+        progressDialog.setMessage("Пожалуйста подождите...")
+        progressDialog.show()
+
+        driveServiceHelper?.createFileAsync(Version.getNowVersion().value)
+                ?.addOnSuccessListener {
+                    progressDialog.dismiss()
+
+                    showSnackbar(binding.root, "Файл успешно загружен")
+                }
+                ?.addOnFailureListener {
+                    progressDialog.dismiss()
+                    showSnackbar(binding.root, it.message ?: "Пустое сообщение")
+                }
+
+    }
+
+    private fun getFile() {
+
+        if (driveServiceHelper == null) {
+
+            if (necessaryAuth) {
+                showSnackbar(binding.root, "Необходимо авторизоваться")
+                return
+            }
+
+            signIn()
+
+        }
+
+        val progressDialog = ProgressDialog(appContext)
+        progressDialog.setTitle("Получение файла")
+        progressDialog.setMessage("Пожалуйста подождите...")
+        progressDialog.show()
+
+        driveServiceHelper!!.getFileAsync()
+                .addOnSuccessListener {
+                    progressDialog.dismiss()
+                    showSnackbar(binding.root, "Файл успешно получен. Id: ${it.id}")
+                }
+                .addOnFailureListener {
+                    progressDialog.dismiss()
+                    showSnackbar(binding.root, it.message ?: "Пустое сообщение")
+                }
+    }
+
+    private fun updateFile() {
+
+        if (driveServiceHelper == null) {
+
+            if (necessaryAuth) {
+                showSnackbar(binding.root, "Необходимо авторизоваться")
+                return
+            }
+
+            signIn()
+
+        }
+
+        val progressDialog = ProgressDialog(appContext)
+        progressDialog.setTitle("Обновление файла")
+        progressDialog.setMessage("Пожалуйста подождите...")
+        progressDialog.show()
+
+        driveServiceHelper!!.updateFileAsync()
+                .addOnSuccessListener {
+                    progressDialog.dismiss()
+                    showSnackbar(binding.root, "Файл успешно обновлен. Id: ${it.id}")
+                }
+                .addOnFailureListener {
+                    progressDialog.dismiss()
+                    showSnackbar(binding.root, it.message ?: "Пустое сообщение")
+                }
+    }
+
+    private fun downloadFile() {
+        if (driveServiceHelper == null) {
+
+            if (necessaryAuth) {
+                showSnackbar(binding.root, "Необходимо авторизоваться")
+                return
+            }
+
+            signIn()
+
+        }
+
+        val progressDialog = ProgressDialog(appContext)
+        progressDialog.setTitle("Скачивание файла")
+        progressDialog.setMessage("Пожалуйста подождите...")
+        progressDialog.show()
+
+        driveServiceHelper!!.downloadFileAsync()
+                .addOnSuccessListener {
+                    progressDialog.dismiss()
+                    showSnackbar(binding.root, "Файл успешно скачан.")
+                }
+                .addOnFailureListener {
+                    progressDialog.dismiss()
+                    showSnackbar(binding.root, it.message ?: "Пустое сообщение")
+                }
+    }
+
+    // endregion
 }
 
 

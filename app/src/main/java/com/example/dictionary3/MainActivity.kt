@@ -57,54 +57,13 @@ class MainActivity : AppCompatActivity(), com.example.dictionary3.Snackbar {
                 }
                 R.id.navigation_settings -> {
                     Log.d(_code, "Navigation settings works...")
+                    val settingsFragment = SettingsFragment.newInstance()
+                    openFragment(settingsFragment)
                 }
                 else -> return@setOnNavigationItemSelectedListener false
             }
             fragmentId = item.itemId
             return@setOnNavigationItemSelectedListener true
-        }
-
-        bindingClass.topAppBar.setOnMenuItemClickListener { menuItem ->
-            when (menuItem.itemId) {
-
-                R.id.actionbar_button_upload -> {
-
-                    updateFile()
-
-                    Log.d(_code, "actionbar_button_upload works...")
-                    true
-                }
-
-                R.id.actionbar_button_download -> {
-
-                    downloadFile()
-
-                    Log.d(_code, "actionbar_button_download works...")
-                    true
-                }
-
-                R.id.actionbar_button_check -> {
-
-                    Log.d(_code, "actionbar_button_check works...")
-                    true
-                }
-
-                R.id.actionbar_button_change -> {
-
-                    signIn()
-
-                    Log.d(_code, "actionbar_button_change works...")
-                    true
-                }
-
-                R.id.actionbar_button_search ->{
-                    Log.d(_code, "actionbar_button_search works...")
-                    true
-                }
-
-                else -> false
-            }
-
         }
 
         // endregion
@@ -113,7 +72,7 @@ class MainActivity : AppCompatActivity(), com.example.dictionary3.Snackbar {
         openFragment(homeFragment)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+   /* override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
@@ -124,7 +83,7 @@ class MainActivity : AppCompatActivity(), com.example.dictionary3.Snackbar {
             }
         }
 
-    }
+    }*/
 
     // endregion
 
@@ -151,7 +110,7 @@ class MainActivity : AppCompatActivity(), com.example.dictionary3.Snackbar {
     // endregion
 
     // region Google Drive
-
+/*
     private fun signIn() {
 
         val signInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -305,7 +264,7 @@ class MainActivity : AppCompatActivity(), com.example.dictionary3.Snackbar {
                     progressDialog.dismiss()
                     showSnackbar(bindingClass.root,it.message ?: "Пустое сообщение")
                 }
-    }
+    }*/
 
     // endregion
 
