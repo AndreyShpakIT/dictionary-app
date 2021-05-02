@@ -7,7 +7,7 @@ import com.google.android.material.snackbar.Snackbar
 // region Interfaces
 interface CellListeners {
     fun onCellClickListener(data: Word, pos: Int)
-    fun onCellSelected(hide: Boolean) { }
+    fun onCellSelected() { }
 }
 
 interface AlertDialogClickListeners {

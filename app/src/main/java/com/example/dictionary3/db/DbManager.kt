@@ -106,6 +106,39 @@ class DbManager(val context: Context, private val dbName: String = DbNames.DATAB
 
         return dataList
     }
+    private fun getWordsWithStates(green: Boolean, orange: Boolean, red: Boolean) : ArrayList<Word> {
+        val dataList = ArrayList<Word>()
+
+        val selection = "${DbNames.FIELD_STATE} = ? OR ${DbNames.FIELD_STATE} = ? OR ${DbNames.FIELD_STATE} = ?"
+
+        val greenState = if (green) "Green" else "-"
+        val orangeState = if (orange) "Yellow" else "-"
+        val redState = if (red) "Red" else "-"
+
+        val selectionArgs = arrayOf(greenState, orangeState, redState)
+
+        val cursor = db?.query(DbNames.TABLE_WORDS, null, selection, selectionArgs, null, null, null)
+
+        var russianWord: String = ""
+        var englishWord: String = ""
+        var wordState: WordStates = WordStates.Red
+        var id = -1
+
+        with(cursor) {
+            while (this?.moveToNext()!!) {
+
+                russianWord = getString(getColumnIndex(DbNames.FIELD_RUSSIAN)) ?: "-"
+                englishWord = getString(getColumnIndex(DbNames.FIELD_ENGLISH)) ?: "-"
+                wordState = WordStates.convertToWordState(getString(getColumnIndex(DbNames.FIELD_STATE)))
+                id = getInt(getColumnIndex(DbNames.FIELD_WORD_ID)) ?: -1
+
+                dataList.add(Word(russianWord, englishWord, wordState, id))
+            }
+        }
+
+        cursor?.close()
+        return dataList
+    }
 
     // endregion
 
@@ -185,6 +218,11 @@ class DbManager(val context: Context, private val dbName: String = DbNames.DATAB
     fun getAvailableLearningListAsync() : Task<ArrayList<Word>> {
         return Tasks.call(mExecutor, {
             return@call getAvailableLearningList()
+        })
+    }
+    fun getWordsWithStatesAsync(green: Boolean, orange: Boolean, red: Boolean) : Task<ArrayList<Word>> {
+        return Tasks.call(mExecutor, {
+            return@call getWordsWithStates(green, orange, red)
         })
     }
 

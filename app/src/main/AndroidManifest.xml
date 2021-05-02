@@ -17,7 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Dictionary3">
-        <activity android:name=".AddLWordActivity"></activity>
+        <activity android:name=".TrainingActivity"></activity>
+        <activity android:name=".AddLWordActivity" />
         <activity android:name=".LearningListActivity" />
         <activity android:name=".EditActivity" />
         <activity android:name=".MainActivity">

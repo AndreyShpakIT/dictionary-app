@@ -35,6 +35,8 @@ class LearningListActivity : AppCompatActivity(), Snackbar, CellListeners {
         binding.buttonRemoveLW.visibility = View.GONE
         binding.constraintLayoutTitle.visibility = View.GONE
 
+        ResourceManager.resources = resources
+
         initHandlers()
         initRecyclerView()
 
@@ -44,6 +46,11 @@ class LearningListActivity : AppCompatActivity(), Snackbar, CellListeners {
         refreshRc()
 
         loadAvailableWordList()
+    }
+
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -83,10 +90,37 @@ class LearningListActivity : AppCompatActivity(), Snackbar, CellListeners {
             startActivityForResult(intent, 501)
         }
 
+        binding.buttonRemoveLW.setOnClickListener {
+
+            val deletingList = rcAdapter.getSelectedList()
+
+            for (i in deletingList.size - 1 downTo 0) {
+                val word = rcAdapter.getItem(i)
+                if (db.deleteLearningWord(word) < 1) {
+                    showSnackbar(binding.root, "Не удалось удалить слово: ${word.englishWord}")
+                }
+                else {
+                    rcAdapter.removeAt(deletingList[i])
+                    if (word.wordState != WordStates.Green) {
+                        restCount--
+                    }
+                    allCount--
+                    updateCount()
+                    availableWordList.add(word)
+                }
+            }
+
+            setDeleteOptionVisibility(false)
+        }
+
+        binding.imbBack.setOnClickListener {
+            finish()
+        }
+
     }
     private fun initRecyclerView() {
         binding.rcViewLWords.layoutManager = LinearLayoutManager(this)
-        rcAdapter = RcAdapter(ArrayList(), this, resources)
+        rcAdapter = RcAdapter(ArrayList(), this, true)
         binding.rcViewLWords.adapter = rcAdapter
     }
 
@@ -158,21 +192,24 @@ class LearningListActivity : AppCompatActivity(), Snackbar, CellListeners {
     }
 
     override fun onCellClickListener(data: Word, pos: Int) {}
+    override fun onCellSelected() {
+        val count = rcAdapter.getSelectedList().size
+        setDeleteOptionVisibility(count != 0)
+        binding.tvSelectedCount.text = count.toString()
+    }
 
-    override fun onCellSelected(hide: Boolean) {
-        if (!hide) {
+    private fun setDeleteOptionVisibility(visible: Boolean) {
+        if (visible) {
             binding.buttonNewLWord.visibility = View.GONE
             binding.constraintLayoutCount.visibility = View.GONE
             binding.buttonRemoveLW.visibility = View.VISIBLE
             binding.constraintLayoutTitle.visibility = View.VISIBLE
-        }
-        else {
+        } else {
             binding.buttonNewLWord.visibility = View.VISIBLE
             binding.constraintLayoutCount.visibility = View.VISIBLE
             binding.buttonRemoveLW.visibility = View.GONE
             binding.constraintLayoutTitle.visibility = View.GONE
         }
-        binding.tvSelectedCount.text = rcAdapter.getSelectedList().size.toString()
     }
 
     // endregion

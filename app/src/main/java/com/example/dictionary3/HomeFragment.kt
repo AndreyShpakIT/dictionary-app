@@ -118,7 +118,7 @@ class HomeFragment : Fragment(), CellListeners, AlertDialogClickListeners, Botto
 
         openDb()
 
-        rcAdapter = RcAdapter(ArrayList(), this)
+        rcAdapter = RcAdapter(ArrayList(), this, false)
         init()
         refreshRcView()
 
